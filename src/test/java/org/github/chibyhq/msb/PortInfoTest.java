@@ -1,4 +1,4 @@
-package org.github.chibyhq.atmoserial;
+package org.github.chibyhq.msb;
 
 import static org.junit.Assert.*;
 
