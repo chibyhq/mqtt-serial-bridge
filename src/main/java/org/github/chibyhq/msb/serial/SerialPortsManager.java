@@ -18,10 +18,14 @@ import com.google.common.collect.MultimapBuilder;
 
 import lombok.extern.java.Log;
 
+/**
+ * Manages access to the host serial ports, such as listing available ports, opening and closing
+ * ports, associating listeners and forwarding messages back and forth.
+ */
 @Log
 public class SerialPortsManager implements SerialPortDataListener {
 
-    Map<String, SerialPort> ports = new HashMap<>();
+    Map<String, SerialPort> activePorts = new HashMap<>();
 
     Multimap<String, SerialMessageListener> portToListeners = MultimapBuilder.hashKeys().arrayListValues().build();
 
@@ -54,6 +58,8 @@ public class SerialPortsManager implements SerialPortDataListener {
         if (!params.containsKey(ParamEnum.BAUD_RATE.toString())) {
             params.put(ParamEnum.BAUD_RATE.toString(), "9600");
         }
+        // TODO : Add support for more port parameters
+        
         SerialPort p = SerialPort.getCommPort(commPort);
 
         if (p.isOpen()) {
@@ -70,15 +76,15 @@ public class SerialPortsManager implements SerialPortDataListener {
     }
 
     public void onClosePort(String commPort) {
-        SerialPort port = ports.get(commPort);
+        SerialPort port = activePorts.get(commPort);
         if (port != null && port.isOpen()) {
             port.closePort();
         }
     }
 
     public void onIncomingMessage(String commPort, String message) throws IOException {
-        SerialPort port = ports.get(commPort);
-        if (port != null) {
+        SerialPort port = activePorts.get(commPort);
+        if (port != null && port.isOpen()) {
             port.getOutputStream().write((message + "\n").getBytes());
         }
     }

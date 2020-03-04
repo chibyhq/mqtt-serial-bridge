@@ -1,7 +1,7 @@
 package org.github.chibyhq.msb.serial;
 
 public enum ParamEnum {
-    BAUD_RATE("baud");
+    BAUD_RATE("baud_rate");
     
     String label;
     
