@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.moquette.BrokerConstants;
-import io.moquette.server.Server;
-import io.moquette.server.config.MemoryConfig;
+import io.moquette.broker.*;
+import io.moquette.broker.config.MemoryConfig;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
