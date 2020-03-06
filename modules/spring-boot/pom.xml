@@ -15,7 +15,7 @@
     <description>MQTT Serial Bridge Spring Boot service</description>
 
     <properties>
-      <moquette.version>0.11</moquette.version>
+      <moquette.version>0.12.1</moquette.version>
       <springboot.version>2.1.0.RELEASE</springboot.version>
     </properties>
     
