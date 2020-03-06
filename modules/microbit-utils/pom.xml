@@ -9,7 +9,6 @@
 	</parent>
     
     <artifactId>msb-microbit-utils</artifactId>
-    <version>0.1-SNAPSHOT</version>
     
     <packaging>jar</packaging>
     <name>MSB :: Microbit Utility classes</name>

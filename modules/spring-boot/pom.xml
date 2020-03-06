@@ -9,8 +9,7 @@
 	</parent>
     
     <artifactId>msb-service</artifactId>
-    <version>0.1-SNAPSHOT</version>
-    
+s    
     <packaging>jar</packaging>
     <name>MSB :: Spring Boot service</name>
     <description>MQTT Serial Bridge Spring Boot service</description>
@@ -25,12 +24,12 @@
       <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-core</artifactId>
-          <version>2.9.7</version>
+          <version>2.10.0</version>
       </dependency>
       <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-databind</artifactId>
-          <version>2.9.10.1</version>
+          <version>2.10.0</version>
       </dependency>
       
       <dependency>
