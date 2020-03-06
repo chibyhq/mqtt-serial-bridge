@@ -9,17 +9,55 @@
 	</parent>
     
     <artifactId>msb-service</artifactId>
-s    
+    
     <packaging>jar</packaging>
     <name>MSB :: Spring Boot service</name>
     <description>MQTT Serial Bridge Spring Boot service</description>
 
+    <properties>
+      <moquette.version>0.11</moquette.version>
+      <springboot.version>2.1.0.RELEASE</springboot.version>
+    </properties>
+    
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.moquette</groupId>
+                <artifactId>moquette-broker</artifactId>
+                <version>${moquette.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    
     <dependencies>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.18.2</version>
+        <scope>provided</scope>
+      </dependency>
+      
       <dependency>
            <groupId>${project.groupId}</groupId>
            <artifactId>msb-core</artifactId>
            <version>${project.version}</version>
       </dependency>
+      
+      <dependency>
+            <groupId>io.moquette</groupId>
+            <artifactId>moquette-broker</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${springboot.version}</version>
+        </dependency>
       
       <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
@@ -37,7 +75,28 @@ s
         <artifactId>javax.inject</artifactId>
         <version>1</version>
       </dependency>
-      
+
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+        <version>${springboot.version}</version>
+      </dependency>
     </dependencies>
+    
+    <build>
+      <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>repackage</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+      </plugins>
+    </build>
 
 </project>
