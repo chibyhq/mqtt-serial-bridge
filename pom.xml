@@ -6,9 +6,9 @@
     <artifactId>mqtt-serial-bridge</artifactId>
     <version>0.1-SNAPSHOT</version>
 	
-    <packaging>jar</packaging>
-    <name>MQTT Serial Bridge</name>
-    <description>${project.name} - A Serial port to MQTT bridge</description>
+    <packaging>pom</packaging>
+    <name>MSB :: Reactor</name>
+    <description>MQTT Serial Bridge - A Serial port to MQTT bridge</description>
     <url>https://github.com/chibyhq/mqtt-serial-bridge</url>
 
     <organization>
@@ -39,60 +39,12 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
     </properties>
 	
+    <modules>
+      <module>modules/core</module>
+      <module>modules/spring-boot</module>
+      <module>modules/microbit-utils</module>
+    </modules>
     
-    <dependencies>
-       <dependency>
-           <groupId>com.fazecast</groupId>
-           <artifactId>jSerialComm</artifactId>
-           <version>2.2.2</version>
-       </dependency>
-      <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>1.18.2</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-core</artifactId>
-          <version>2.9.7</version>
-      </dependency>
-      <dependency>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-databind</artifactId>
-          <version>2.9.10.1</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>javax.inject</groupId>
-        <artifactId>javax.inject</artifactId>
-        <version>1</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.eclipse.paho</groupId>
-        <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-        <version>1.2.2</version>
-      </dependency>
-
-      <dependency>
-      	<groupId>junit</groupId>
-      	<artifactId>junit</artifactId>
-      	<version>4.12</version>
-      	<scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>28.2-jre</version>
-      </dependency>
-      <dependency>
-        <groupId>org.easymock</groupId>
-        <artifactId>easymock</artifactId>
-        <version>2.4</version>
-        <scope>test</scope>
-      </dependency>
-    </dependencies>
     <build>
         <plugins>
             <plugin>
