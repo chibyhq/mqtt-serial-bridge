@@ -1,5 +1,5 @@
 # MQTT Serial Bridge
-A serial port to MQTT bridge in Java with Spring Boot affinities and support for multiple MQTT naming conventions.
+A serial port to MQTT bridge in Java with Spring Boot affinities and support for multiple MQTT naming conventions and message formats.
 
 ## Current Features
 
