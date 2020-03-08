@@ -23,6 +23,15 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+    
+    <repositories>
+      <repository>
+        <id>bintray</id>
+        <url>https://jcenter.bintray.com</url>
+        <releases> <enabled>true</enabled> </releases>
+        <snapshots> <enabled>false</enabled> </snapshots>
+      </repository>
+    </repositories>
 
     <scm>
         <url>https://github.com/chibyhq/mqtt-serial-bridge</url>
