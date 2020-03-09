@@ -6,6 +6,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import io.moquette.BrokerConstants;
@@ -14,6 +15,7 @@ import io.moquette.broker.config.MemoryConfig;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
+@ConditionalOnProperty("mqtt.server.enable")
 @Slf4j
 public class MoquetteWrapper {
 

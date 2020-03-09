@@ -4,8 +4,8 @@ import java.util.HashMap;
 
 import javax.annotation.PostConstruct;
 
-import org.github.chibyhq.msb.mqtt.MqttForwardListener;
 import org.github.chibyhq.msb.serial.JSerialPortsManager;
+import org.github.chibyhq.msb.serial.SerialMessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -17,20 +17,20 @@ import lombok.extern.slf4j.Slf4j;
 public class JSerialPortsManagerBean extends JSerialPortsManager {
 
 	@Autowired
-	MqttForwardListener mqttForwardListener;
+	SerialMessageListener serialMessageListener;
 	
-	@Value("msb.serial.port")
+	@Value("${msb.serial.port:/dev/ttyACM0}")
 	String serialPort;
 
-	public JSerialPortsManagerBean(MqttForwardListener mqttForwardListener) {
+	public JSerialPortsManagerBean(SerialMessageListener serialMessageListener) {
 		super();
-		this.mqttForwardListener = mqttForwardListener;
+		this.serialMessageListener = serialMessageListener;
 	}
 	
 	@PostConstruct
 	public void startListener() {
 		log.info("Starting port listener {}", serialPort);
-		this.addListener(serialPort, mqttForwardListener);
+		this.addListener(serialPort, serialMessageListener);
 		this.onOpenPort(serialPort, new HashMap<String, String>());
 	}
 	
