@@ -43,9 +43,9 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
     @Override
 	public boolean onOpenPort(String commPort, Map<String, String> params) {
     	log.debug("Opening port", commPort);
-        if (!params.containsKey(ParamEnum.BAUD_RATE.toString())) {
-            params.put(ParamEnum.BAUD_RATE.toString(), "9600");
-        }
+//        if (!params.containsKey(ParamEnum.BAUD_RATE.toString())) {
+//            params.put(ParamEnum.BAUD_RATE.toString(), "9600");
+//        }
         // TODO : Add support for more port parameters
         
         SerialPort p = SerialPort.getCommPort(commPort);
@@ -59,7 +59,9 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
             }
             return true;
         } else {
-            p.setBaudRate(Integer.valueOf(params.get(ParamEnum.BAUD_RATE.toString())));
+//            p.setBaudRate(Integer.valueOf(params.get(ParamEnum.BAUD_RATE.toString())));
+            p.addDataListener(this);
+            p.setComPortParameters(115200, 8,1,0);
             return p.openPort();
         }
     }
@@ -85,23 +87,23 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
         return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
     }
 
-    @Override
-    public void serialEvent(SerialPortEvent event) {
-        SerialPort port = event.getSerialPort();
-        switch (event.getEventType()) {
-        case SerialPort.LISTENING_EVENT_DATA_AVAILABLE:
-            byte[] newData = new byte[port.bytesAvailable()];
-            int numRead = port.readBytes(newData, newData.length);
-            if (numRead > 0) {
-                String portName = port.getSystemPortName();
-                final DeviceOutput out = DeviceOutput.builder().port(portName).timestamp(System.currentTimeMillis())
-                        .line(new String(newData)).build();
-                updateListeners(portName, out);
-            }
-            break;
-        default:
-            break;
-        }
-    }
+	@Override
+	public void serialEvent(SerialPortEvent event) {
+		SerialPort port = event.getSerialPort();
+		switch (event.getEventType()) {
+		case SerialPort.LISTENING_EVENT_DATA_AVAILABLE:
+			byte[] newData = new byte[port.bytesAvailable()];
+			int numRead = port.readBytes(newData, newData.length);
+			if (numRead > 0) {
+				String portName = port.getSystemPortName();
+				final DeviceOutput out = DeviceOutput.builder().port(portName).timestamp(System.currentTimeMillis())
+						.line(new String(newData)).build();
+				updateListeners(portName, out);
+			}
+			break;
+		default:
+			break;
+		}
+	}
 
 }
