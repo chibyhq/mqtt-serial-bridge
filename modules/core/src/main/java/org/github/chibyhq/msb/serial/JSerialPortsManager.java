@@ -2,6 +2,7 @@ package org.github.chibyhq.msb.serial;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,9 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
     @Override
 	public boolean onOpenPort(String commPort, Map<String, String> params) {
     	log.debug("Opening port", commPort);
+    	if (params == null) {
+    		params = new HashMap<>();
+    	}
 //        if (!params.containsKey(ParamEnum.BAUD_RATE.toString())) {
 //            params.put(ParamEnum.BAUD_RATE.toString(), "9600");
 //        }
@@ -84,22 +88,28 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
 
     @Override
     public int getListeningEvents() {
-        return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
+        return SerialPort.LISTENING_EVENT_DATA_RECEIVED;
+    }
+    
+    @Override
+    public byte[] getMessageDelimiter() {
+      return new byte[] { (byte)0x0D, (byte)0x0A };
+    }
+    
+    @Override
+    public boolean delimiterIndicatesEndOfMessage() {
+    	return true;
     }
 
 	@Override
 	public void serialEvent(SerialPortEvent event) {
 		SerialPort port = event.getSerialPort();
 		switch (event.getEventType()) {
-		case SerialPort.LISTENING_EVENT_DATA_AVAILABLE:
-			byte[] newData = new byte[port.bytesAvailable()];
-			int numRead = port.readBytes(newData, newData.length);
-			if (numRead > 0) {
-				String portName = port.getSystemPortName();
-				final DeviceOutput out = DeviceOutput.builder().port(portName).timestamp(System.currentTimeMillis())
-						.line(new String(newData)).build();
-				updateListeners(portName, out);
-			}
+		case SerialPort.LISTENING_EVENT_DATA_RECEIVED:
+			String portName = port.getSystemPortName();
+			final DeviceOutput out = DeviceOutput.builder().port(portName).timestamp(System.currentTimeMillis())
+						.line(new String(event.getReceivedData())).build();
+			updateListeners(portName, out);
 			break;
 		default:
 			break;

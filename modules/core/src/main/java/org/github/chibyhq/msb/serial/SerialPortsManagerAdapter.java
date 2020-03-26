@@ -6,14 +6,14 @@ import java.util.Map;
 import org.github.chibyhq.msb.dto.DeviceOutput;
 
 import com.fazecast.jSerialComm.SerialPort;
-import com.fazecast.jSerialComm.SerialPortDataListener;
+import com.fazecast.jSerialComm.SerialPortMessageListener;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public abstract class SerialPortsManagerAdapter implements SerialPortDataListener, SerialPortsManager {
+public abstract class SerialPortsManagerAdapter implements SerialPortMessageListener, SerialPortsManager {
 
 	Map<String, SerialPort> activePorts = new HashMap<>();
 	Multimap<String, SerialMessageListener> portToListeners = MultimapBuilder.hashKeys().arrayListValues().build();
