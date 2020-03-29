@@ -1,24 +1,27 @@
 package org.github.chibyhq.msb.serial;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.Callable;
 
 import org.awaitility.Awaitility;
 import org.awaitility.Duration;
 import org.github.chibyhq.msb.dto.DeviceOutput;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import com.fazecast.jSerialComm.SerialPort;
 
+@DisabledIfEnvironmentVariable(named="GITHUB_RUN_ID", matches=".*")
 public class JSerialPortsManagerTest implements SerialMessageListener {
 
 	private SerialPort serialPort;
 	private Integer counter;
 
-	@Before
+	@BeforeEach
 	public void setup(){
 		SerialPort.getCommPorts();
 		serialPort = SerialPort.getCommPort("/dev/ttyACM0");

@@ -1,9 +1,12 @@
 package org.github.chibyhq.msb.serial;
 
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
+
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortMessageListener;
 
+@DisabledIfEnvironmentVariable(named="GITHUB_RUN_ID", matches=".*")
 public class ListenerSimpleJSerialCommTest {
 
 	public static class Listener implements SerialPortMessageListener {
@@ -43,20 +46,7 @@ public class ListenerSimpleJSerialCommTest {
 		comPort.openPort();
 		System.out.println("Open ? "+comPort.isOpen());
 		System.out.println("Now listening...");
-//		try {
-//			while (true) {
-//				System.out.println("Reading... " );
-//				while (comPort.bytesAvailable() <= 0)
-//					Thread.sleep(20);
-//				System.out.println(comPort.isOpen());
-//				System.out.println(comPort.bytesAvailable());
-//				byte[] readBuffer = new byte[comPort.bytesAvailable()];
-//				int numRead = comPort.readBytes(readBuffer, readBuffer.length);
-//				System.out.println("Read " + numRead + " bytes.");
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
+
 	}
 
 }
