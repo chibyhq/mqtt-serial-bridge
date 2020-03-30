@@ -66,6 +66,7 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
 //            p.setBaudRate(Integer.valueOf(params.get(ParamEnum.BAUD_RATE.toString())));
             p.addDataListener(this);
             p.setComPortParameters(115200, 8,1,0);
+            p.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 200, 0);
             return p.openPort();
         }
     }
