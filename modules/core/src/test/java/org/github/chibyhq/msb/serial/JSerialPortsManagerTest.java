@@ -18,28 +18,23 @@ import com.fazecast.jSerialComm.SerialPort;
 @DisabledIfEnvironmentVariable(named="GITHUB_RUN_ID", matches=".*")
 public class JSerialPortsManagerTest implements SerialMessageListener {
 
-	private SerialPort serialPort;
 	private Integer counter;
 
 	@BeforeEach
 	public void setup(){
-		SerialPort.getCommPorts();
-		serialPort = SerialPort.getCommPort("/dev/ttyACM0");
-		serialPort.setBaudRate(115200);
 		counter = 0;
 	}
 	
 	
 	@Test
 	public void test() throws InterruptedException {
-		assertTrue(serialPort.openPort());
 		JSerialPortsManager mgr = new JSerialPortsManager();
 		assertNotNull(mgr.onGetPorts());
-		mgr.addListener("/dev/ttyACM0", this);
-		mgr.onOpenPort("/dev/ttyACM0", null);
+		mgr.addListener("ttyACM0", this);
+		assertTrue(mgr.onOpenPort("ttyACM0", null));
 		Awaitility.await()
 	    .atLeast(Duration.ONE_HUNDRED_MILLISECONDS)
-	    .atMost(Duration.FIVE_SECONDS)
+	    .atMost(Duration.ONE_SECOND)
 	  .with()
 	    .pollInterval(Duration.ONE_HUNDRED_MILLISECONDS)
 	    .until(hasReceivedMessage());
