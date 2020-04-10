@@ -8,7 +8,7 @@ import org.github.chibyhq.msb.dto.PortInfo;
 
 public interface SerialPortsManager {
 
-	List<PortInfo> onGetPorts();
+	List<PortInfo> onGetPorts(boolean forceRequery);
 
 	boolean addListener(String commPort, SerialMessageListener listener);
 
@@ -16,7 +16,7 @@ public interface SerialPortsManager {
 
 	boolean onOpenPort(String commPort, Map<String, String> params);
 
-	void onClosePort(String commPort);
+	boolean onClosePort(String commPort);
 
 	void onIncomingMessage(String commPort, String message) throws IOException;
 

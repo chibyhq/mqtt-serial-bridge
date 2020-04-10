@@ -19,7 +19,7 @@ public class JSerialPortsManagerBean extends JSerialPortsManager {
 	@Autowired
 	SerialMessageListener serialMessageListener;
 	
-	@Value("${msb.serial.port:/dev/ttyACM0}")
+	@Value("${msb.serial.port:ttyACM0}")
 	String serialPort;
 
 	public JSerialPortsManagerBean(SerialMessageListener serialMessageListener) {
