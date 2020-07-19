@@ -2,7 +2,7 @@ package org.github.chibyhq.msb.service;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.github.chibyhq.msb.mqtt.MqttErrorHandler;
-import org.github.chibyhq.msb.mqtt.MqttForwardListener;
+import org.github.chibyhq.msb.mqtt.SerialToMqttForwardingListener;
 import org.github.chibyhq.msb.mqtt.MqttNamingStrategy;
 import org.github.chibyhq.msb.serial.SerialMessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import lombok.Getter;
 @Getter
 @Primary
 @ConditionalOnProperty("msb.mqtt.forward")
-public class MqttForwardListenerBean extends MqttForwardListener{
+public class MqttForwardListenerBean extends SerialToMqttForwardingListener{
 	@Autowired MqttNamingStrategy namingStrategy;
 	@Autowired MqttClient mqttClient;
 	

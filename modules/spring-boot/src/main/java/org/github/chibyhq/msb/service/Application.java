@@ -7,11 +7,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan("org.github.chibyhq.msb")
-public class Application {
+@ComponentScan({"org.github.chibyhq.msb","org.github.chibyhq.msb.service.mqtt"})
+public class Application{
+
     
     public static void main(String[] args) throws IOException {
-        @SuppressWarnings("unused")
 		SpringApplication application = new SpringApplication(Application.class);
+		
+        application.run(args);
     }
+    
 }
