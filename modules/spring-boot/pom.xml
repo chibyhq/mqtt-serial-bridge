@@ -125,6 +125,14 @@
           <configuration>
             <skip>${it.skip}</skip>
           </configuration>
+          <executions>
+              <execution>
+                  <goals>
+                      <goal>integration-test</goal>
+                      <goal>verify</goal>
+                  </goals>
+              </execution>
+          </executions>
         </plugin>
         <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -133,7 +141,7 @@
             <executions>
               <execution>
                 <id>add-test-source</id>
-                <phase>validate</phase>
+                <phase>generate-test-sources</phase>
                 <goals>
                   <goal>add-test-source</goal>
                 </goals>
