@@ -114,7 +114,7 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
     }
 
     @Override
-	public void onIncomingMessage(String commPort, String message) throws IOException {
+	public void onIncomingSerialMessage(String commPort, String message) throws IOException {
         SerialPort port = serialPorts.get(commPort);
         if (port != null && port.isOpen()) {
             port.getOutputStream().write((message + "\n").getBytes());
@@ -149,6 +149,14 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
 		default:
 			break;
 		}
+	}
+	
+	@Override
+	public void onOutgoingSerialMessage(String commPort, String message) throws IOException {
+	    SerialPort port = serialPorts.get(commPort);
+        if (port != null && port.isOpen()) {
+            port.getInputStream().read((message + "\n").getBytes());
+        }
 	}
 
 }

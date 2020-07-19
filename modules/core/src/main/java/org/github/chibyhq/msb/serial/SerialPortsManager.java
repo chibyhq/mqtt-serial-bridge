@@ -18,6 +18,8 @@ public interface SerialPortsManager {
 
 	boolean onClosePort(String commPort);
 
-	void onIncomingMessage(String commPort, String message) throws IOException;
+	void onIncomingSerialMessage(String commPort, String message) throws IOException;
+	
+	void onOutgoingSerialMessage(String commPort, String message) throws IOException;
 
 }

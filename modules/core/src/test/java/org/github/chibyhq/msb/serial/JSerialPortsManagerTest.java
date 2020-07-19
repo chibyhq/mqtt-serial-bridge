@@ -68,7 +68,7 @@ public class JSerialPortsManagerTest implements SerialMessageListener {
 
 
 	@Override
-	public void onMessage(DeviceOutput output) {
+	public void onSerialMessage(DeviceOutput output) {
 		counter++;
 	}
 

@@ -4,5 +4,5 @@ import org.github.chibyhq.msb.dto.DeviceOutput;
 
 public interface SerialMessageListener {
    String getName();
-   void onMessage(DeviceOutput output);
+   void onSerialMessage(DeviceOutput output);
 }

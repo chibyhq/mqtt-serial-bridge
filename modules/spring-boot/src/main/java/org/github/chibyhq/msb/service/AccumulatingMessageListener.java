@@ -19,7 +19,7 @@ public class AccumulatingMessageListener implements SerialMessageListener {
 	}
 
 	@Override
-	public void onMessage(DeviceOutput output) {
+	public void onSerialMessage(DeviceOutput output) {
 		counter.getAndIncrement();
 		messages.add(output);
 		System.out.println(output.getPort()+">> "+output.getLine());

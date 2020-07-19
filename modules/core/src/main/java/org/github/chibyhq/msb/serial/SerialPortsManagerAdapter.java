@@ -30,7 +30,7 @@ public abstract class SerialPortsManagerAdapter implements SerialPortMessageList
 	protected void updateListeners(String portName, final DeviceOutput deviceOutput) {
 		portToListeners.get(portName).forEach(listener -> {
 		    try{
-		        listener.onMessage(deviceOutput);
+		        listener.onSerialMessage(deviceOutput);
 		    }catch(Exception e) {
 		        log.error(String.format("Could not relay message to listener {}", listener.getName()));
 		        log.debug(e.getMessage());
