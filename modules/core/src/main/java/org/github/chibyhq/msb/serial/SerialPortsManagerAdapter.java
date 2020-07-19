@@ -1,6 +1,9 @@
 package org.github.chibyhq.msb.serial;
 
+import java.util.Optional;
+
 import org.github.chibyhq.msb.dto.DeviceOutput;
+import org.github.chibyhq.msb.dto.PortInfo;
 
 import com.fazecast.jSerialComm.SerialPortMessageListener;
 import com.google.common.collect.Multimap;
@@ -19,6 +22,10 @@ public abstract class SerialPortsManagerAdapter implements SerialPortMessageList
 
 	@Override
 	public boolean addListener(String commPort, SerialMessageListener listener) {
+	    Optional<PortInfo> portInfo = getPortInfo(commPort);
+        if(portInfo.isPresent()) {
+	      listener.onPortOpen(portInfo.get());
+	    }
 	    return portToListeners.put(commPort, listener);
 	}
 
@@ -27,7 +34,7 @@ public abstract class SerialPortsManagerAdapter implements SerialPortMessageList
 	   return portToListeners.remove(commPort, listener);
 	}
 
-	protected void updateListeners(String portName, final DeviceOutput deviceOutput) {
+	protected void updateListenersWithMessage(String portName, final DeviceOutput deviceOutput) {
 		portToListeners.get(portName).forEach(listener -> {
 		    try{
 		        listener.onSerialMessage(deviceOutput);
@@ -36,6 +43,28 @@ public abstract class SerialPortsManagerAdapter implements SerialPortMessageList
 		        log.debug(e.getMessage());
 		    }
 		});
+	}
+	
+    protected void updateListenersWithOpenPort(String portName) {
+        portToListeners.get(portName).forEach(listener -> {
+            try{
+                PortInfo port = getPortInfo(portName).get();
+                if(port.isOpen()) {
+                  listener.onPortOpen(port);
+                }
+            }catch(Exception e) {
+                log.error(String.format("Could not relay message to listener {}", listener.getName()));
+                log.debug(e.getMessage());
+            }
+        });
+    }
+	
+	@Override
+	public Optional<PortInfo> getPortInfo(final String commPort) {
+	    return onGetPorts(false)
+	            .stream()
+	            .filter(port -> commPort.equalsIgnoreCase(port.getSystemPortName()))
+	            .findFirst();
 	}
 
 }

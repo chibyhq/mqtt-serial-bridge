@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.github.chibyhq.msb.dto.DeviceOutput;
+import org.github.chibyhq.msb.dto.PortInfo;
 import org.github.chibyhq.msb.serial.SerialMessageListener;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,10 @@ public class AccumulatingMessageListener implements SerialMessageListener {
 		messages.add(output);
 		System.out.println(output.getPort()+">> "+output.getLine());
 	}
+
+    @Override
+    public void onPortOpen(PortInfo port) {
+    }
 	
 
 }

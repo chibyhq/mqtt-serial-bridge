@@ -144,7 +144,7 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
 			String portName = port.getSystemPortName();
 			final DeviceOutput out = DeviceOutput.builder().port(portName).timestamp(System.currentTimeMillis())
 						.line(new String(event.getReceivedData())).build();
-			updateListeners(portName, out);
+			updateListenersWithMessage(portName, out);
 			break;
 		default:
 			break;

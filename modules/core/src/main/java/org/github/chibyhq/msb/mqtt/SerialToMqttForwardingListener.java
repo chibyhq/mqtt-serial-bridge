@@ -1,9 +1,18 @@
 package org.github.chibyhq.msb.mqtt;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.github.chibyhq.msb.dto.DeviceOutput;
+import org.github.chibyhq.msb.dto.PortInfo;
 import org.github.chibyhq.msb.serial.SerialMessageFormatter;
 import org.github.chibyhq.msb.serial.SerialMessageListener;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Forwards incoming serial messages to an MQTT topic, via :
@@ -16,7 +25,8 @@ import org.github.chibyhq.msb.serial.SerialMessageListener;
  * @author bcopy
  *
  */
-public class SerialToMqttForwardingListener implements SerialMessageListener {
+@Slf4j
+public class SerialToMqttForwardingListener implements SerialMessageListener, IMqttMessageListener {
 
     MqttNamingStrategy namingStrategy;
     
@@ -25,6 +35,10 @@ public class SerialToMqttForwardingListener implements SerialMessageListener {
     SerialMessageFormatter formatter;
     
     MqttErrorHandler mqttErrorHandler;
+    
+    List<String> subscribedTopics = new ArrayList<>();
+    
+    Boolean enabled = false;
     
     public SerialToMqttForwardingListener(MqttNamingStrategy namingStrategy, MqttClient mqttClient,
             SerialMessageFormatter formatter, MqttErrorHandler mqttErrorHandler) {
@@ -54,6 +68,28 @@ public class SerialToMqttForwardingListener implements SerialMessageListener {
         } catch (Exception e) {
             mqttErrorHandler.onException(e);
         }
+    }
+    
+    @Override
+    public void onPortOpen(PortInfo portInfo) {
+        try {
+            // Immediately subscribe to the corresponding incoming MQTT topic for this port
+            String mqttTopic = namingStrategy.getIncomingMqttCommandTopicForPort(portInfo);
+            if(!subscribedTopics.contains(mqttTopic)) {
+                mqttClient.subscribe(mqttTopic, this);
+                subscribedTopics.add(mqttTopic);
+            }
+            enabled = true;
+        } catch (MqttException e) {
+            log.error("Unable to subscribe to command topic for port ", portInfo.toString(), e);
+        }
+        
+    }
+
+    @Override
+    public void messageArrived(String mqttTopic, MqttMessage message) throws Exception {
+        // TODO Auto-generated method stub
+        
     }
 
 }
