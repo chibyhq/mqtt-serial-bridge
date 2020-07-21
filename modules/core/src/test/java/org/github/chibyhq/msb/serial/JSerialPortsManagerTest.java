@@ -15,8 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
-import com.fazecast.jSerialComm.SerialPort;
-
 @DisabledIfEnvironmentVariable(named="GITHUB_RUN_ID", matches=".*")
 public class JSerialPortsManagerTest implements SerialMessageListener {
 
