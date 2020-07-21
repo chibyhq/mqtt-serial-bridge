@@ -11,13 +11,22 @@ public class HomieNamingStrategy implements MqttNamingStrategy {
 
     String hostname;
 
-    public HomieNamingStrategy(String hostname) {
-        if (hostname == null || hostname.isEmpty()) {
-            try {
-                hostname = InetAddress.getLocalHost().getHostName();
-            } catch (UnknownHostException e) {
-                hostname = "unknown-host";
-            }
+    public HomieNamingStrategy(String host) {
+        this.hostname = host;
+        if (new String(hostname).isEmpty()) {
+            initializeHostname();
+        }
+    }
+    
+    public HomieNamingStrategy() {
+       initializeHostname();
+    }
+
+    private final void initializeHostname() {
+        try {
+            hostname = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            hostname = "unknown-host";
         }
     }
 
