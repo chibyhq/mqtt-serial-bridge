@@ -1,1 +1,11 @@
-mqtt.server.enable: true
+msb.mqtt:
+  server.enable: true
+  forward: true
+  client:
+    id: ${random.uuid}
+    server.uri: "tcp://localhost:1883"
+
+logging.level: WARNING
+logging.level.io.moquette: ERROR
+logging.level.org.github.chibyhq.msb: TRACE
+  
