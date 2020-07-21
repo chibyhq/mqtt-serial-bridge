@@ -28,7 +28,9 @@ public class AccumulatingMessageListener implements SerialMessageListener {
 
     @Override
     public void onPortOpen(PortInfo port) {
+        System.out.println(String.format(">> {} now open",port.getSystemPortName()));
     }
+    
 	
 
 }
