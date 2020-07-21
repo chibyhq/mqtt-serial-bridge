@@ -69,7 +69,7 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
     
     @Override
 	public boolean openPort(String commPort, Map<String, String> params) {
-    	log.debug("Opening port", commPort);
+    	log.debug("Attempting to open port {}", commPort);
     	if (params == null) {
     		params = new HashMap<>();
     	}

@@ -23,6 +23,7 @@ public abstract class SerialPortsManagerAdapter implements SerialPortMessageList
 	@Override
 	public boolean addListener(String commPort, SerialMessageListener listener) {
 	    Optional<PortInfo> portInfo = getPort(commPort);
+	    listener.setSerialPortsManager(this);
         if(portInfo.isPresent()) {
 	      listener.onPortOpen(portInfo.get());
 	    }

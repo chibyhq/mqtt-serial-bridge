@@ -9,6 +9,7 @@ import org.github.chibyhq.msb.mqtt.MqttNamingStrategy;
 import org.github.chibyhq.msb.mqtt.SerialToMqttForwardingListener;
 import org.github.chibyhq.msb.mqtt.homie.HomieNamingStrategy;
 import org.github.chibyhq.msb.serial.SerialMessageFormatter;
+import org.github.chibyhq.msb.serial.SerialMessageListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -46,9 +47,8 @@ public class SpringConfiguration {
     }
 
     @Bean
-    @Primary
     @ConditionalOnProperty("msb.mqtt.forward")
-    SerialToMqttForwardingListener serialToMqttForwardingListener(MqttNamingStrategy namingStrategy,
+    SerialMessageListener serialToMqttForwardingListener(MqttNamingStrategy namingStrategy,
             MqttClient mqttClient, SerialMessageFormatter formatter, MqttErrorHandler mqttErrorHandler) {
         return new SerialToMqttForwardingListener(namingStrategy, mqttClient, formatter, mqttErrorHandler);
     }

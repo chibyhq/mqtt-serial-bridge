@@ -74,5 +74,9 @@ public class JSerialPortsManagerTest implements SerialMessageListener {
     @Override
     public void onPortOpen(PortInfo port) {
     }
+    
+    @Override
+    public void setSerialPortsManager(SerialPortsManager serialPortsManagerAdapter) {
+    }
 
 }

@@ -7,4 +7,5 @@ public interface SerialMessageListener {
    String getName();
    void onSerialMessage(DeviceOutput output);
    void onPortOpen(PortInfo port);
+   void setSerialPortsManager(SerialPortsManager serialPortsManagerAdapter);
 }
