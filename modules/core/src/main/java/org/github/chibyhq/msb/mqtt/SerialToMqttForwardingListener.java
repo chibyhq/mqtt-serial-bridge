@@ -62,17 +62,30 @@ public class SerialToMqttForwardingListener implements SerialMessageListener, IM
     @Override
     public void onSerialMessage(DeviceOutput output) {
         String destinationTopic = namingStrategy.getTopicName(output);
-        
         try {
-            mqttClient.publish(destinationTopic, formatter.getMessageForDeviceOutput(output));
-        } catch (Exception e) {
-            mqttErrorHandler.onException(e);
+            if(!mqttClient.isConnected()) {
+                mqttClient.connect();
+            }
+        }catch(Exception e) {
+            log.warn("MQTT client could not connect upon message : {}",output);
+        }
+        if(mqttClient.isConnected()) {
+            try {
+                mqttClient.publish(destinationTopic, formatter.getMessageForDeviceOutput(output));
+            } catch (Exception e) {
+                mqttErrorHandler.onException(e);
+            }
+        }else {
+            log.debug("MQTT client not connected, message ignored : {}",output);
         }
     }
     
     @Override
     public void onPortOpen(PortInfo portInfo) {
         try {
+            if(!mqttClient.isConnected()) {
+                mqttClient.connect();
+            }
             // Immediately subscribe to the corresponding incoming MQTT topic for this port
             String mqttTopic = namingStrategy.getIncomingMqttCommandTopicForPort(portInfo);
             if(!subscribedTopics.contains(mqttTopic)) {
