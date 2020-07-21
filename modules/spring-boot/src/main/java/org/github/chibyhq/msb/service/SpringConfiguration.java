@@ -2,7 +2,8 @@ package org.github.chibyhq.msb.service;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.github.chibyhq.msb.lineprotocol.SimpleLineProtocolFormatter;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.github.chibyhq.msb.dto.DeviceOutput;
 import org.github.chibyhq.msb.mqtt.MqttErrorHandler;
 import org.github.chibyhq.msb.mqtt.MqttErrorLoggingHandler;
 import org.github.chibyhq.msb.mqtt.MqttNamingStrategy;
@@ -23,7 +24,7 @@ public class SpringConfiguration {
 
     @Bean
     MqttNamingStrategy mqttNamingStrategy() {
-        return new HomieNamingStrategy("localhost");
+        return new HomieNamingStrategy();
     }
 
     @Bean
@@ -37,7 +38,13 @@ public class SpringConfiguration {
 
     @Bean
     SerialMessageFormatter messageFormatter() {
-        return new SimpleLineProtocolFormatter();
+        return new SerialMessageFormatter() {
+            @Override
+            public MqttMessage getMessageForDeviceOutput(DeviceOutput deviceOutput) {
+                String message = deviceOutput.getLine()+" "+deviceOutput.getTimestamp();
+                return new MqttMessage(message.getBytes());
+            }
+        };
     }
 
     @Bean
