@@ -9,7 +9,6 @@ import org.github.chibyhq.msb.dto.PortInfo;
 import org.github.chibyhq.msb.serial.SerialMessageListener;
 import org.springframework.stereotype.Component;
 
-@Component
 public class AccumulatingMessageListener implements SerialMessageListener {
 
 	AtomicInteger counter = new AtomicInteger();
