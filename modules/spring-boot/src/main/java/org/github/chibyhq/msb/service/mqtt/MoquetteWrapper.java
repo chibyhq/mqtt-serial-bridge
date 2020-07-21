@@ -10,23 +10,23 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import io.moquette.BrokerConstants;
-import io.moquette.broker.*;
+import io.moquette.broker.Server;
 import io.moquette.broker.config.MemoryConfig;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
-@ConditionalOnProperty("mqtt.server.enable")
+@ConditionalOnProperty("msb.mqtt.server.enable")
 @Slf4j
 public class MoquetteWrapper {
 
 
-    @Value("${mqtt.server.port:1883}")
+    @Value("${msb.mqtt.server.port:1883}")
     private int serverPort;
 
-    @Value("${mqtt.server.wsport:8883}")
+    @Value("${msb.mqtt.server.wsport:8883}")
     private int websocketPort;
     
-    @Value("${mqtt.server.host:0.0.0.0}")
+    @Value("${msb.mqtt.server.host:0.0.0.0}")
     private String host;
 
     private Server server;
