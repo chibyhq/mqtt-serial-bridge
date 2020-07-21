@@ -32,22 +32,22 @@ public class JSerialPortsManagerTest implements SerialMessageListener {
 	@Test
 	public void testMessageReceived() throws InterruptedException {
 		JSerialPortsManager mgr = new JSerialPortsManager();
-		assertNotNull(mgr.onGetPorts(false));
+		assertNotNull(mgr.getPorts(false));
 		mgr.addListener(TTY_ACM0, this);
-		assertTrue(mgr.onOpenPort(TTY_ACM0, null));
+		assertTrue(mgr.openPort(TTY_ACM0, null));
 		Awaitility.await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS).atMost(Duration.ONE_SECOND).with()
 				.pollInterval(Duration.ONE_HUNDRED_MILLISECONDS).until(hasReceivedMessage());
 		assertTrue(counter > 0);
 		{
-			List<PortInfo> ports = mgr.onGetPorts(false);
+			List<PortInfo> ports = mgr.getPorts(false);
 			assertTrue(ports.size() > 0);
 			assertTrue(ports.stream()
 					.anyMatch(portInfo -> portInfo.getSystemPortName().equals(TTY_ACM0) && portInfo.isOpen()));
 
-			assertTrue(mgr.onClosePort(TTY_ACM0));
+			assertTrue(mgr.closePort(TTY_ACM0));
 		}
 
-		assertTrue(mgr.onGetPorts(false).stream().anyMatch(portInfo -> portInfo.getSystemPortName().equals(TTY_ACM0)
+		assertTrue(mgr.getPorts(false).stream().anyMatch(portInfo -> portInfo.getSystemPortName().equals(TTY_ACM0)
                 && (!portInfo.isOpen())));
 	}
 

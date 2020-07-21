@@ -22,7 +22,7 @@ public abstract class SerialPortsManagerAdapter implements SerialPortMessageList
 
 	@Override
 	public boolean addListener(String commPort, SerialMessageListener listener) {
-	    Optional<PortInfo> portInfo = getPortInfo(commPort);
+	    Optional<PortInfo> portInfo = getPort(commPort);
         if(portInfo.isPresent()) {
 	      listener.onPortOpen(portInfo.get());
 	    }
@@ -48,7 +48,7 @@ public abstract class SerialPortsManagerAdapter implements SerialPortMessageList
     protected void updateListenersWithOpenPort(String portName) {
         portToListeners.get(portName).forEach(listener -> {
             try{
-                PortInfo port = getPortInfo(portName).get();
+                PortInfo port = getPort(portName).get();
                 if(port.isOpen()) {
                   listener.onPortOpen(port);
                 }
@@ -60,8 +60,8 @@ public abstract class SerialPortsManagerAdapter implements SerialPortMessageList
     }
 	
 	@Override
-	public Optional<PortInfo> getPortInfo(final String commPort) {
-	    return onGetPorts(false)
+	public Optional<PortInfo> getPort(final String commPort) {
+	    return getPorts(false)
 	            .stream()
 	            .filter(port -> commPort.equalsIgnoreCase(port.getSystemPortName()))
 	            .findFirst();

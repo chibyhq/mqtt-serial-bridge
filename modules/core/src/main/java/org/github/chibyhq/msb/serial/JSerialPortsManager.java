@@ -46,7 +46,7 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
 	}
 	
     @Override
-	public List<PortInfo> onGetPorts(boolean forceRequery) {
+	public List<PortInfo> getPorts(boolean forceRequery) {
     	if(forceRequery) {
     		refreshPorts();
     	}
@@ -68,7 +68,7 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
     }
     
     @Override
-	public boolean onOpenPort(String commPort, Map<String, String> params) {
+	public boolean openPort(String commPort, Map<String, String> params) {
     	log.debug("Opening port", commPort);
     	if (params == null) {
     		params = new HashMap<>();
@@ -105,7 +105,7 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
     }
 
     @Override
-	public boolean onClosePort(String commPort) {
+	public boolean closePort(String commPort) {
         SerialPort port = serialPorts.get(commPort);
         if (port != null && port.isOpen()) {
             return port.closePort();

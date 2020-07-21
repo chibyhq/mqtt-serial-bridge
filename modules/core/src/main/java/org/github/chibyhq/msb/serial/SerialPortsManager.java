@@ -9,17 +9,17 @@ import org.github.chibyhq.msb.dto.PortInfo;
 
 public interface SerialPortsManager {
 
-	List<PortInfo> onGetPorts(boolean forceRequery);
+	List<PortInfo> getPorts(boolean forceRequery);
 
 	boolean addListener(String commPort, SerialMessageListener listener);
 
 	boolean removeListener(String commPort, SerialMessageListener listener);
 
-	boolean onOpenPort(String commPort, Map<String, String> params);
+	boolean openPort(String commPort, Map<String, String> params);
 
-	boolean onClosePort(String commPort);
+	boolean closePort(String commPort);
 	
-	Optional<PortInfo> getPortInfo(String commPort);
+	Optional<PortInfo> getPort(String commPort);
 
 	void onIncomingSerialMessage(String commPort, String message) throws IOException;
 	

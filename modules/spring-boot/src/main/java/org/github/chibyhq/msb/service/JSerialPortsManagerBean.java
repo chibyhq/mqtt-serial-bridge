@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 import javax.annotation.PostConstruct;
 
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.github.chibyhq.msb.serial.JSerialPortsManager;
 import org.github.chibyhq.msb.serial.SerialMessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ public class JSerialPortsManagerBean extends JSerialPortsManager {
 	@Autowired
 	SerialMessageListener serialMessageListener;
 	
+	
 	@Value("${msb.serial.port:ttyACM0}")
 	String serialPort;
 
@@ -28,13 +31,10 @@ public class JSerialPortsManagerBean extends JSerialPortsManager {
 	}
 	
 	@PostConstruct
-	public void startListener() {
+	public void startListener() throws MqttSecurityException, MqttException {
 		log.info("Starting port listener {}", serialPort);
 		this.addListener(serialPort, serialMessageListener);
-		this.onOpenPort(serialPort, new HashMap<String, String>());
+		this.openPort(serialPort, new HashMap<String, String>());
 	}
-	
-	
-	
 	
 }
