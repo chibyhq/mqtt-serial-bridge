@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 public class JSerialPortsManager extends SerialPortsManagerAdapter {
 
 	Map<String, SerialPort> serialPorts;
+	
+	ScheduledExecutorService executorService = Executors.newScheduledThreadPool(3);
 	
 	public JSerialPortsManager() {
 		super();
@@ -73,9 +77,9 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
     	if (params == null) {
     		params = new HashMap<>();
     	}
-//        if (!params.containsKey(ParamEnum.BAUD_RATE.toString())) {
-//            params.put(ParamEnum.BAUD_RATE.toString(), "9600");
-//        }
+        if (!params.containsKey(ParamEnum.BAUD_RATE.toString())) {
+            params.put(ParamEnum.BAUD_RATE.toString(), "115200");
+        }
         // TODO : Add support for more port parameters
         
         SerialPort p = serialPorts.get(commPort);
@@ -90,9 +94,8 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
 	            }
 	            return true;
 	        } else {
-	//            p.setBaudRate(Integer.valueOf(params.get(ParamEnum.BAUD_RATE.toString())));
 	            p.addDataListener(this);
-	            p.setComPortParameters(115200, 8,1,0);
+	            p.setComPortParameters(Integer.valueOf(params.get(ParamEnum.BAUD_RATE.toString())), 8,1,0);
 	            p.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 200, 0);
 	            
 	            return p.openPort();
