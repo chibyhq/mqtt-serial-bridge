@@ -7,5 +7,5 @@ msb.mqtt:
 
 logging.level: WARNING
 logging.level.io.moquette: ERROR
-logging.level.org.github.chibyhq.msb: TRACE
+logging.level.org.github.chibyhq.msb: DEBUG
   
