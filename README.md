@@ -20,7 +20,33 @@ A serial port to MQTT bridge in Java with Spring Boot affinities and support for
 
 ### How to use the bridge library
 
-.... to be added....
+#### The Jitpack way
+
+* Download the Spring Boot service distribution, for instance version ```0.1``` :
+
+```wget https://jitpack.io/com/github/chibyhq/mqtt-serial-bridge/msb-service/0.1/msb-service-0.1.jar```
+
+:warning: Please remember to replace 0.1 in the command above by the version number you wish to use.
+
+* Create a Spring Boot configuration in ```application.yml``` :
+
+```yaml
+msb.serial:
+  port: ttyACM0
+  baudrate: 115200
+msb.mqtt:
+  server.enable: true
+  forward: true
+  client:
+    id: ${random.uuid}
+    server.uri: "tcp://localhost:1883"
+```
+
+* Connect your serial device using the port name and baud rate indicated in your configuration
+
+* Fire up your MQTT client (e.g. MQTT Explorer) - you should see the following topics, for instance :
+   * ```/homie/<hostname>/serial/ttyACM0/in``` for messages you want to send to your serial device.
+   * ```/homie/<hostname>/serial/ttyACM0/out``` for messages you want to collect from your serial device
 
 ### Samples
 
