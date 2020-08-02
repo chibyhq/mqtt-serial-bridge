@@ -45,6 +45,9 @@ public class MoquetteWrapper {
         server = new Server();
         server.startServer(config);
         log.info("Moquette started successfully");
+        
+        // TODO: Add a Spring Event to indicate when the MQTT broker is activated
+        //       If server is enabled, the client should only try and connect then.
     }
 
     @PreDestroy
