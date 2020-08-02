@@ -38,8 +38,8 @@ public class HomieNamingStrategy implements MqttNamingStrategy {
     }
 
     @Override
-    public String getIncomingMqttCommandTopicForPort(PortInfo portInfo) {
-        return String.format("homie/%s/serial/%s/in", hostname, portInfo.getDescriptor());
+    public String getIncomingMqttCommandTopicForPort(String port) {
+        return String.format("homie/%s/serial/%s/in", hostname, port);
     }
     
     @Override

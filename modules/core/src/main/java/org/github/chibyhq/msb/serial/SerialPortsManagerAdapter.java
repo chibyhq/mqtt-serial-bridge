@@ -54,13 +54,26 @@ public abstract class SerialPortsManagerAdapter implements SerialPortMessageList
                   listener.onPortOpen(port);
                 }
             }catch(Exception e) {
-                log.error(String.format("Could not relay message to listener {}", listener.getName()));
-                log.debug(e.getMessage());
+                log.error(String.format("Could not send open port {} notification to listener {}", portName, listener.getName()),e);
             }
         });
     }
 	
-	@Override
+    protected void notifyListenersOfClosedPort(String portName) {
+        portToListeners.get(portName).forEach(listener -> {
+            try{
+                  listener.onPortClosed(portName);
+            }catch(Exception e) {
+                log.error(String.format("Could not send closed port {} notification to listener {}", portName, listener.getName()),e);
+            }
+        });
+    }
+    
+    protected void removeAllListeners(String portName) {
+        portToListeners.removeAll(portName);
+    }
+
+    @Override
 	public Optional<PortInfo> getPort(final String commPort) {
 	    return getPorts(false)
 	            .stream()

@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.github.chibyhq.msb.dto.DeviceOutput;
-import org.github.chibyhq.msb.dto.PortInfo;
 
 /**
  * Implement this interface to let the bridge know how to translate
@@ -16,6 +15,6 @@ import org.github.chibyhq.msb.dto.PortInfo;
  */
 public interface MqttNamingStrategy {
     String getTopicName(DeviceOutput output);
-    String getIncomingMqttCommandTopicForPort(PortInfo portInfo);
+    String getIncomingMqttCommandTopicForPort(String port);
     Optional<String> getPortForTopicNameOrMessage(String topic, MqttMessage message);
 }

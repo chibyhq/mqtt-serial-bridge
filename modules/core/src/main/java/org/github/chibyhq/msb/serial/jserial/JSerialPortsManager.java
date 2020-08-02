@@ -23,15 +23,14 @@ import com.fazecast.jSerialComm.SerialPortEvent;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * JSerial implementation of the Serial Port manager.
- * Manages access to the host serial ports, such as listing available ports,
- * opening and closing ports, associating listeners and forwarding messages back
- * and forth.
+ * JSerial implementation of the Serial Port manager. Manages access to the host
+ * serial ports, such as listing available ports, opening and closing ports,
+ * associating listeners and forwarding messages back and forth.
  */
 @Slf4j
 public class JSerialPortsManager extends SerialPortsManagerAdapter {
 
-    Map<String, SerialPort> serialPorts;
+    Map<String, SerialPort> serialPorts = new HashMap<>();
 
     ScheduledExecutorService executorService = Executors.newScheduledThreadPool(3);
 
@@ -45,19 +44,56 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
     }
 
     /**
-     * Query the ports via the JSerialComm method. Note that this will
-     * re-instantiate all port instances, which may reset their <b>open</b>
-     * status (which means that serial ports may be open, but their Java
-     * representation will all be marked as <b>closed</b>). For further details,
+     * Query the ports via the JSerialComm method. 
+     * We need to merge the JSerialComm query results with the current
+     * known port instances we already have : This is because
+     * JSerialComm creates new SerialPort object instance everytime
+     * you query ports.
+     * For further details,
      * have a look at :
      * <a href="https://github.com/Fazecast/jSerialComm/issues/272">issue
      * 272</a>.
      */
     public void refreshPorts() {
-        log.debug("Querying available ports...");
-        serialPorts = Arrays.stream(SerialPort.getCommPorts())
+        log.trace("Querying available ports...");
+        // We must now :
+        //   * Step 1 : detect removed ports and clean them up
+        //   * Step 2 : merge existing and open ports with the ones we have
+        Map<String, SerialPort> scanResults = Arrays.stream(SerialPort.getCommPorts())
                 .collect(Collectors.toMap(SerialPort::getSystemPortName, Function.identity()));
-        log.debug("Found {} ports", serialPorts.size());
+        
+        synchronized(serialPorts) {
+            List<String> portsToRemove = new ArrayList<>();
+            for(String knownPortName : serialPorts.keySet()) {
+                if(!scanResults.containsKey(knownPortName)) {
+                    log.error("Port {} was closed unexpectedly", knownPortName);
+                    // The port has now been removed
+                    notifyListenersOfClosedPort(knownPortName);
+                    portsToRemove.add(knownPortName);
+                }
+            }
+            for(String portToRemove : portsToRemove) {
+                // Clean up all associated listeners
+                serialPorts.remove(portToRemove);
+                removeAllListeners(portToRemove);
+                // Release the port from the operating system, so it can be reused
+                // with the same identifier if the device is plugged in again
+                SerialPort.getCommPort(portToRemove).closePort();
+            }
+            
+            for(String newPortName : scanResults.keySet()) {
+                if(serialPorts.containsKey(newPortName)) {
+                    if(log.isDebugEnabled()) {
+                        log.trace("Port {} already present, not reinstantiating it", newPortName);
+                    }
+                }else {
+                    // This is a new port, we add it the list
+                    serialPorts.put(newPortName, scanResults.get(newPortName));
+                }
+            }
+        }
+        
+        log.trace("Found {} ports", serialPorts.size());
     }
 
     @Override
@@ -67,17 +103,19 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
         }
         List<PortInfo> portsResult = new ArrayList<>();
 
-        for (SerialPort port : serialPorts.values()) {
-            PortInfo portInfo = new PortInfo();
-            portInfo.setSystemPortName(port.getSystemPortName());
-            portInfo.setOpen(port.isOpen());
-            portInfo.setDescriptivePortName(port.getDescriptivePortName());
-            if (port.isOpen()) {
-                portInfo.setBaudRate(port.getBaudRate());
-                portInfo.setDsr(port.getDSR());
-                portInfo.setParity(port.getParity());
+        synchronized(serialPorts) {
+            for (SerialPort port : serialPorts.values()) {
+                PortInfo portInfo = new PortInfo();
+                portInfo.setSystemPortName(port.getSystemPortName());
+                portInfo.setOpen(port.isOpen());
+                portInfo.setDescriptivePortName(port.getDescriptivePortName());
+                if (port.isOpen()) {
+                    portInfo.setBaudRate(port.getBaudRate());
+                    portInfo.setDsr(port.getDSR());
+                    portInfo.setParity(port.getParity());
+                }
+                portsResult.add(portInfo);
             }
-            portsResult.add(portInfo);
         }
         return portsResult;
     }
@@ -107,6 +145,10 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
                         params.getWriteTimeout());
 
                 openPortSuccessful = p.openPort();
+                if (openPortSuccessful) {
+                    log.debug("Opened Port {} successfully !", commPort);
+                }
+                updateListenersWithOpenPort(p.getSystemPortName());
             }
 
         } catch (Exception e) {
@@ -121,6 +163,10 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
 
     }
 
+    /**
+     * Explicitly close the given port. We will not reattempt to
+     * reconnect to port, even if it comes online at a later stage.
+     */
     @Override
     public boolean closePort(String commPort) {
         log.debug("Attempting to close port {}", commPort);

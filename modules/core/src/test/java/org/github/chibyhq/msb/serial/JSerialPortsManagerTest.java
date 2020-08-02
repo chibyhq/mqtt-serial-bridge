@@ -33,7 +33,7 @@ public class JSerialPortsManagerTest implements SerialMessageListener {
 		JSerialPortsManager mgr = new JSerialPortsManager();
 		assertNotNull(mgr.getPorts(false));
 		mgr.addListener(TTY_ACM0, this);
-		assertTrue(mgr.openPort(TTY_ACM0, null));
+		assertTrue(mgr.openPort(TTY_ACM0, PortParameters.builder().baudRate(115200).keepTryingUponFailure(false).build()));
 		Awaitility.await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS).atMost(Duration.ONE_SECOND).with()
 				.pollInterval(Duration.ONE_HUNDRED_MILLISECONDS).until(hasReceivedMessage());
 		assertTrue(counter > 0);
@@ -78,6 +78,11 @@ public class JSerialPortsManagerTest implements SerialMessageListener {
     
     @Override
     public void setSerialPortsManager(SerialPortsManager serialPortsManagerAdapter) {
+    }
+
+
+    @Override
+    public void onPortClosed(String port) {
     }
 
 }

@@ -8,4 +8,5 @@ public interface SerialMessageListener {
    void onSerialMessage(DeviceOutput output);
    void onPortOpen(PortInfo port);
    void setSerialPortsManager(SerialPortsManager serialPortsManagerAdapter);
+   void onPortClosed(String port);
 }

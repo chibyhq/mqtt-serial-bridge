@@ -96,7 +96,7 @@ public class SerialToMqttForwardingListener implements SerialMessageListener, IM
             }
             // Immediately subscribe to the corresponding incoming MQTT topic
             // for this port
-            String mqttTopic = namingStrategy.getIncomingMqttCommandTopicForPort(portInfo);
+            String mqttTopic = namingStrategy.getIncomingMqttCommandTopicForPort(portInfo.getSystemPortName());
             if (!subscribedTopics.contains(mqttTopic)) {
                 mqttClient.subscribe(mqttTopic, this);
                 subscribedTopics.add(mqttTopic);
@@ -130,6 +130,27 @@ public class SerialToMqttForwardingListener implements SerialMessageListener, IM
 
     public void setSerialPortsManager(SerialPortsManager serialPortsManager) {
         this.serialPortsManager = serialPortsManager;
+    }
+
+    /**
+     * If the port is closed, we must unsubscribe from the corresponding
+     * MQTT topic(s).
+     */
+    @Override
+    public void onPortClosed(String port) {
+        // Unsubscribe to the corresponding incoming MQTT topic
+        // for this port
+        String mqttTopic = namingStrategy.getIncomingMqttCommandTopicForPort(port);
+        if (subscribedTopics.contains(mqttTopic)) {
+            try {
+                mqttClient.unsubscribe(mqttTopic);
+                subscribedTopics.remove(mqttTopic);
+                enabled = false;
+            } catch (MqttException e) {
+                log.error("Upon port {} disconnect : Could not unsubscribe MQTT topic {}", port, mqttTopic, e);
+            }
+            
+        }
     }
 
 }

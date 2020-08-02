@@ -23,6 +23,9 @@ public class JSerialPortsManagerBean extends JSerialPortsManager {
 	
 	@Value("${msb.serial.port:ttyACM0}")
 	String serialPort;
+	
+    @Value("${msb.serial.baudrate:115200}")
+    Integer rate;
 
 	public JSerialPortsManagerBean(SerialMessageListener serialMessageListener) {
 		super();
@@ -33,7 +36,7 @@ public class JSerialPortsManagerBean extends JSerialPortsManager {
 	public void startListener() throws MqttSecurityException, MqttException {
 		log.info("Starting port listener {}", serialPort);
 		this.addListener(serialPort, serialMessageListener);
-		this.openPort(serialPort, PortParameters.builder().build());
+		this.openPort(serialPort, PortParameters.builder().baudRate(rate).build());
 	}
 	
 }
