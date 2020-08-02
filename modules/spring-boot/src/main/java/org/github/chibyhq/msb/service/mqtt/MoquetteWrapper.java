@@ -5,8 +5,10 @@ import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import io.moquette.BrokerConstants;
@@ -18,7 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 @ConditionalOnProperty("msb.mqtt.server.enable")
 @Slf4j
 public class MoquetteWrapper {
-
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Value("${msb.mqtt.server.port:1883}")
     private int serverPort;
@@ -46,8 +49,7 @@ public class MoquetteWrapper {
         server.startServer(config);
         log.info("Moquette started successfully");
         
-        // TODO: Add a Spring Event to indicate when the MQTT broker is activated
-        //       If server is enabled, the client should only try and connect then.
+        applicationEventPublisher.publishEvent(new MqttAvailableEvent(this));
     }
 
     @PreDestroy

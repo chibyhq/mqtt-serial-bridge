@@ -73,9 +73,7 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
                 }
             }
             for(String portToRemove : portsToRemove) {
-                // Clean up all associated listeners
                 serialPorts.remove(portToRemove);
-                removeAllListeners(portToRemove);
                 // Release the port from the operating system, so it can be reused
                 // with the same identifier if the device is plugged in again
                 SerialPort.getCommPort(portToRemove).closePort();

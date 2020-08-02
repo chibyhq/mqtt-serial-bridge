@@ -1,5 +1,5 @@
 msb.mqtt:
-  server.enable: true
+  server.enable: false
   forward: true
   client:
     id: ${random.uuid}

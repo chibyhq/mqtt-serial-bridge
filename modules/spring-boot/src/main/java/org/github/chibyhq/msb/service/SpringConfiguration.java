@@ -10,8 +10,12 @@ import org.github.chibyhq.msb.mqtt.SerialToMqttForwardingListener;
 import org.github.chibyhq.msb.mqtt.homie.HomieNamingStrategy;
 import org.github.chibyhq.msb.serial.SerialMessageFormatter;
 import org.github.chibyhq.msb.serial.SerialMessageListener;
+import org.github.chibyhq.msb.service.mqtt.MqttAvailableEvent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -50,6 +54,25 @@ public class SpringConfiguration {
     SerialMessageListener serialToMqttForwardingListener(MqttNamingStrategy namingStrategy,
             MqttClient mqttClient, SerialMessageFormatter formatter, MqttErrorHandler mqttErrorHandler) {
         return new SerialToMqttForwardingListener(namingStrategy, mqttClient, formatter, mqttErrorHandler);
+    }
+    
+    @Bean
+    @ConditionalOnProperty(name = "msb.mqtt.server.enable", havingValue="true")
+    ApplicationListener<MqttAvailableEvent> embeddedMqttServerAvailable(
+            @Autowired SerialToMqttForwardingListener mqttListener){
+        return new ApplicationListener<MqttAvailableEvent>() {
+            @Override
+            public void onApplicationEvent(MqttAvailableEvent event) {
+                mqttListener.onMqttServerReady();
+            }
+        };
+    }
+    
+    @Bean
+    @ConditionalOnProperty(name = "msb.mqtt.server.enable", havingValue="false", matchIfMissing = true)
+    Boolean immediateMqttStartup(@Autowired SerialToMqttForwardingListener mqttListener){
+        mqttListener.onMqttServerReady();
+        return true;
     }
     
 }

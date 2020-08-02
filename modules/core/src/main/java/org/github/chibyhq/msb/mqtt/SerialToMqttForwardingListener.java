@@ -2,8 +2,11 @@ package org.github.chibyhq.msb.mqtt;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -44,7 +47,15 @@ public class SerialToMqttForwardingListener implements SerialMessageListener, IM
 
     SerialPortsManager serialPortsManager;
 
-    List<String> subscribedTopics = new ArrayList<>();
+    /**
+     * Indicates that we are ready to connect to MQTT. Unless this flag is set
+     * to <code>true</code>, the MQTT client will not be connected or used at
+     * all. This is useful for embedded MQTT servers, that may not be readily
+     * available.
+     */
+    Boolean mqttReady = false;
+
+    Set<String> subscribedTopicsSet = new HashSet<>();
 
     Boolean enabled = false;
 
@@ -69,43 +80,60 @@ public class SerialToMqttForwardingListener implements SerialMessageListener, IM
 
     @Override
     public void onSerialMessage(DeviceOutput output) {
-        String destinationTopic = namingStrategy.getTopicName(output);
-        try {
-            if (!mqttClient.isConnected()) {
-                mqttClient.connect();
-            }
-        } catch (Exception e) {
-            log.warn("MQTT client could not connect upon message : {}", output);
-        }
-        if (mqttClient.isConnected()) {
+        if (mqttReady) {
+            String destinationTopic = namingStrategy.getTopicName(output);
             try {
-                mqttClient.publish(destinationTopic, formatter.getMessageForDeviceOutput(output));
-            } catch (Exception e) {
-                mqttErrorHandler.onException(e);
+                if (!mqttClient.isConnected()) {
+                    mqttClient.connect();
+                }
+            } catch (MqttException e) {
+                log.warn("MQTT client could not connect upon message : {}", output, e);
+            }
+            if (mqttClient.isConnected()) {
+                try {
+                    mqttClient.publish(destinationTopic, formatter.getMessageForDeviceOutput(output));
+                } catch (Exception e) {
+                    mqttErrorHandler.onException(e);
+                }
+            } else {
+                log.debug("MQTT client not connected, message ignored : {}", output);
             }
         } else {
-            log.debug("MQTT client not connected, message ignored : {}", output);
+            if (log.isTraceEnabled())
+                log.trace("MQTT not ready, ignoring serial message");
         }
     }
 
     @Override
     public void onPortOpen(PortInfo portInfo) {
-        try {
-            if (!mqttClient.isConnected()) {
-                mqttClient.connect();
+        String mqttTopic = namingStrategy.getIncomingMqttCommandTopicForPort(portInfo.getSystemPortName());
+        // The set will not add a duplicate entry if it is already there
+        subscribedTopicsSet.add(mqttTopic);
+
+        if (mqttReady) {
+            try {
+                if (!mqttClient.isConnected()) {
+                    mqttClient.connect();
+                }
+                // Immediately subscribe to the corresponding incoming MQTT
+                // topic for this port
+                subscribeToCommandTopic();
+            } catch (MqttException e) {
+                log.error("Could not connect MQTT client or to command topics upon port open {} ", portInfo.getSystemPortName());
             }
-            // Immediately subscribe to the corresponding incoming MQTT topic
-            // for this port
-            String mqttTopic = namingStrategy.getIncomingMqttCommandTopicForPort(portInfo.getSystemPortName());
-            if (!subscribedTopics.contains(mqttTopic)) {
-                mqttClient.subscribe(mqttTopic, this);
-                subscribedTopics.add(mqttTopic);
+        }
+
+    }
+
+    public void subscribeToCommandTopic() {
+        try {
+            for (String topic : subscribedTopicsSet) {
+                mqttClient.subscribe(topic, this);
             }
             enabled = true;
         } catch (MqttException e) {
-            log.error("Unable to subscribe to command topic for port ", portInfo.toString(), e);
+            log.error("Unable to subscribe to command topics", e);
         }
-
     }
 
     @Override
@@ -115,7 +143,7 @@ public class SerialToMqttForwardingListener implements SerialMessageListener, IM
             if (serialPortsManager != null) {
                 try {
                     String messagePayload = new String(message.getPayload());
-                    log.debug("Sending on port {} message : {}",port.get(),messagePayload);
+                    log.debug("Sending on port {} message : {}", port.get(), messagePayload);
                     serialPortsManager.onIncomingSerialMessage(port.get(), messagePayload);
                 } catch (IOException ioe) {
                     log.error("Exception while publishing incoming MQTT message on serial port {}", port.get());
@@ -133,24 +161,42 @@ public class SerialToMqttForwardingListener implements SerialMessageListener, IM
     }
 
     /**
-     * If the port is closed, we must unsubscribe from the corresponding
-     * MQTT topic(s).
+     * If the port is closed, we must unsubscribe from the corresponding MQTT
+     * topic(s).
      */
     @Override
     public void onPortClosed(String port) {
         // Unsubscribe to the corresponding incoming MQTT topic
         // for this port
         String mqttTopic = namingStrategy.getIncomingMqttCommandTopicForPort(port);
-        if (subscribedTopics.contains(mqttTopic)) {
+        if (subscribedTopicsSet.contains(mqttTopic)) {
             try {
                 mqttClient.unsubscribe(mqttTopic);
-                subscribedTopics.remove(mqttTopic);
+                subscribedTopicsSet.remove(mqttTopic);
                 enabled = false;
             } catch (MqttException e) {
                 log.error("Upon port {} disconnect : Could not unsubscribe MQTT topic {}", port, mqttTopic, e);
             }
-            
+
         }
+    }
+
+    public void onMqttServerReady() {
+        log.debug("MQTT now ready for SerialToMqtt listener");
+        // Connect client if needed
+        try {
+            if (!mqttClient.isConnected()) {
+                mqttClient.connect();
+            }
+        } catch (MqttException e) {
+            log.debug("MQTT now ready but client could not connect", e);
+        }
+
+        // Subscribe to command topic if needed
+        if (!enabled) {
+            subscribeToCommandTopic();
+        }
+        mqttReady = true;
     }
 
 }
