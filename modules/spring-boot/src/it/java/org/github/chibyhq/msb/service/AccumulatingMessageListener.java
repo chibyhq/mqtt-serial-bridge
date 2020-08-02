@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.github.chibyhq.msb.dto.DeviceOutput;
 import org.github.chibyhq.msb.dto.PortInfo;
 import org.github.chibyhq.msb.serial.SerialMessageListener;
+import org.github.chibyhq.msb.serial.SerialPortsManager;
 import org.springframework.stereotype.Component;
 
 public class AccumulatingMessageListener implements SerialMessageListener {
@@ -28,6 +29,18 @@ public class AccumulatingMessageListener implements SerialMessageListener {
     @Override
     public void onPortOpen(PortInfo port) {
         System.out.println(String.format(">> {} now open",port.getSystemPortName()));
+    }
+
+    @Override
+    public void setSerialPortsManager(SerialPortsManager serialPortsManagerAdapter) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onPortClosed(String port) {
+        // TODO Auto-generated method stub
+        
     }
     
 	
