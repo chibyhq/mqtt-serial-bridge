@@ -1,4 +1,4 @@
-package org.github.chibyhq.msb.serial;
+package org.github.chibyhq.msb.serial.jserial;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 import org.github.chibyhq.msb.dto.DeviceOutput;
 import org.github.chibyhq.msb.dto.PortInfo;
+import org.github.chibyhq.msb.serial.PortParameters;
+import org.github.chibyhq.msb.serial.SerialPortsManagerAdapter;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortEvent;
@@ -21,6 +23,7 @@ import com.fazecast.jSerialComm.SerialPortEvent;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * JSerial implementation of the Serial Port manager.
  * Manages access to the host serial ports, such as listing available ports,
  * opening and closing ports, associating listeners and forwarding messages back
  * and forth.
@@ -95,7 +98,6 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
             }
         }
         try {
-
             SerialPort p = serialPorts.get(commPort);
             if (p != null) {
                 p.addDataListener(this);
@@ -112,7 +114,7 @@ public class JSerialPortsManager extends SerialPortsManagerAdapter {
         }
 
         if (!openPortSuccessful) {
-            log.error("Port {} does not exist currently on the host system", commPort);
+            log.debug("Port {} does not exist currently on the host system", commPort);
         }
 
         return openPortSuccessful;

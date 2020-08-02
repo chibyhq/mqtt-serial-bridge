@@ -11,6 +11,7 @@ import org.awaitility.Awaitility;
 import org.awaitility.Duration;
 import org.github.chibyhq.msb.dto.DeviceOutput;
 import org.github.chibyhq.msb.dto.PortInfo;
+import org.github.chibyhq.msb.serial.jserial.JSerialPortsManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
