@@ -2,7 +2,6 @@ package org.github.chibyhq.msb.mqtt.homie;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.Optional;
 
 import org.eclipse.paho.client.mqttv3.MqttMessage;
