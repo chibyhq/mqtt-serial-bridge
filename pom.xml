@@ -4,7 +4,7 @@
 	
     <groupId>com.github.chibyhq</groupId>
     <artifactId>mqtt-serial-bridge</artifactId>
-    <version>0.1</version>
+    <version>0.2</version>
 	
     <packaging>pom</packaging>
     <name>MSB :: Reactor</name>
@@ -47,7 +47,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>11</java.version>
+        <java.version>8</java.version>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
     </properties>

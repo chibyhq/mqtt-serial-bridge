@@ -51,7 +51,7 @@ public class JSerialPortsManagerTest implements SerialMessageListener {
 	}
 
 	private Callable<Boolean> hasReceivedMessage() {
-		return new Callable<>() {
+		return new Callable<Boolean>() {
 			@Override
 			public Boolean call() throws Exception {
 				return counter > 0;
