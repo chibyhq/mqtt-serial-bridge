@@ -116,7 +116,7 @@ public class SerialToMqttForwardingListener implements SerialMessageListener, IM
                 try {
                     String messagePayload = new String(message.getPayload());
                     log.debug("Sending on port {} message : {}",port.get(),messagePayload);
-                    serialPortsManager.onOutgoingSerialMessage(port.get(), messagePayload);
+                    serialPortsManager.onIncomingSerialMessage(port.get(), messagePayload);
                 } catch (IOException ioe) {
                     log.error("Exception while publishing incoming MQTT message on serial port {}", port.get());
                 }
