@@ -16,7 +16,7 @@
 
     <properties>
       <moquette.version>0.12.1</moquette.version>
-      <springboot.version>2.1.0.RELEASE</springboot.version>
+      <springboot.version>2.5.12</springboot.version>
       <it.skip>false</it.skip>
     </properties>
     
