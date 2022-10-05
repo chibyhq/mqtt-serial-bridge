@@ -3,6 +3,8 @@
 [![GitHub Actions Status](https://github.com/chibyhq/mqtt-serial-bridge/workflows/Java%20CI/badge.svg)](https://github.com/chibyhq/mqtt-serial-bridge/actions)
 [![Java 11](https://img.shields.io/badge/Java-11-green "Java 11")](https://java.com)
 
+🔺 This project is superseded by [Microsquad](https://github.com/CMCRobotics/microsquad)  and is now archived. 🔺
+
 A serial port to MQTT bridge in Java with Spring Boot affinities and support for multiple MQTT naming conventions and message formats.
 
 ## Current Features
